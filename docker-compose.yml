@@ -1,0 +1,28 @@
+version: '3'
+services:
+
+  maya:
+    restart: on-failure
+    build: ./maya  # Répertoire contenant le Dockerfile pour la construction de l'image
+    volumes:
+      - maya_project:/home/${USER}/Documents/Maya/projects  # Montage du volume pour les projets Maya
+      - maya_preferences:/home/${USER}/Documents/Maya/prefs  # Montage du volume pour les préférences Maya
+    # - ${PROJECTS_PATH}:/home/${USER}/Documents/Maya/projects  # Montage du volume personnalisé pour les projets Maya
+    # - ${PREFERENCES_PATH}:/home/${USER}/Documents/Maya/prefs  # Montage du volume personnalisé pour les préférences Maya
+    env_file:
+      - .env  # Fichier .env contenant les variables d'environnement
+    devices:
+      - /dev/dri  # Périphérique pour l'accélération matérielle (Direct Rendering Infrastructure)
+      - /dev/snd  # Périphérique pour le son
+    security_opt:
+      - seccomp:unconfined  # Option de sécurité pour désactiver le confinement de Seccomp
+    networks:
+      - maya_network  # Réseau pour l'accès externe à Maya
+
+volumes:
+  maya_project:  # Volume pour les projets Maya
+  maya_preferences:  # Volume pour les préférences Maya
+
+networks:
+  maya_network:
+    external: true  # Réseau externe pour l'accès à Maya
